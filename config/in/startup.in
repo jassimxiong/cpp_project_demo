@@ -1,0 +1,26 @@
+#!/bin/sh
+
+pkg_name="@PKG_NAME@"
+pkg_path="@APP_ROOT_DIR@/$pkg_name"
+case "$1" in
+  start)
+    echo "Starting @APP_NAME@..."
+    cd "$pkg_path" || exit 1
+    nohup ./bin/@DAEMONS@ >/dev/null 2>&1 &
+    cd - || exit
+    ;;
+  stop)
+    echo "Stopping @APP_NAME@..."
+    killall -9 "@DAEMONS@"
+    killall -9 "@APP_NAME@"
+    sleep 1
+    ;;
+  restart)
+    "$0" stop
+    sleep 1
+    "$0" start
+    ;;
+  *)
+    echo "Usage: $0 [start|stop|restart]"
+    exit 1
+esac

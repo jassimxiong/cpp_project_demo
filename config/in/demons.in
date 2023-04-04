@@ -1,0 +1,21 @@
+#!/bin/sh
+exec >>/dev/null
+
+path="@APP_ROOT_DIR@/@PKG_NAME@"
+name="@APP_NAME@"
+
+export LD_LIBRARY_PATH=lib:"$LD_LIBRARY_PATH"
+while true
+do
+    process=$(pgrep -l "$name")
+    if [ "$process" -eq "" ]
+    then
+        cd "$path" || exit 1
+        killall -9 "$name"
+        ./bin/"$name" &
+        cd - || exit 1
+        sleep 30
+    else
+        sleep 30
+    fi
+done

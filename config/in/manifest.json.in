@@ -1,0 +1,10 @@
+{
+  "PkgName": "@PKG_NAME@",
+  "AppName": "@APP_NAME@",
+  "VersionName": "@VERSION_NAME@",
+  "VersionCode": @VERSION_CODE@,
+  "Arch": "@ARCH@",
+  "Platform": "@PLATFORM@",
+  "Description": "@DESCRIPTION@",
+  "BuildDate": "@BUILD_DATE@"
+}

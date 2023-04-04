@@ -1,0 +1,71 @@
+#!/bin/sh
+
+demons="@DAEMONS@"
+start_shell="@STARTUP_SHELL_NAME@"
+exe_name="@APP_NAME@"
+pkg_name="@PKG_NAME@"
+exe_root="@APP_ROOT_DIR@/$pkg_name"
+current_path=$(cd "$(dirname "$0")" && pwd )
+
+check_install_log_and_del_it() {
+    if [ -f "$exe_root/install.log" ]
+    then
+        rm "$exe_root"/install.log -rf
+    fi
+}
+
+check_exe_run_status_and_kill_it() {
+    process=$(pgrep -l "$1")
+    if [ "$process" -eq "" ]
+    then
+        sleep 1 
+    else
+        killall -9 "$1" 2>/dev/null || :
+    fi
+}
+
+create_dir() {
+    mkdir -p "$exe_root"/bin
+    mkdir -p "$exe_root"/lib
+    mkdir -p "$exe_root"/config
+}
+
+copy_file() {
+    cp "$current_path"/bin/*                 "$exe_root"/bin
+    cp "$current_path"/lib/*                 "$exe_root"/lib
+    cp "$current_path"/config/*              "$exe_root"/config
+    cp "$current_path"/app.conf              "$exe_root"/config
+    cp "$current_path"/logo.png              "$exe_root"/config
+    cp "$current_path"/manifest.json         "$exe_root"
+    cp "$current_path"/"$start_shell"        /etc/init.d
+}
+
+chmod_all_exe() {
+    chmod +x "$exe_root"/bin/*
+    chmod +x /etc/init.d/"$start_shell"
+}
+
+record_time() {
+	time=$(date "+%Y-%m-%d/%H:%M:%S")
+	echo "[time    ] : ${time}">> "$exe_root"/install.log
+}
+
+progress() {
+	echo "[progress] : ${1}">> "$exe_root"/install.log
+}
+
+create_dir
+check_install_log_and_del_it
+record_time
+progress 0
+check_exe_run_status_and_kill_it "$demons"
+progress 30
+check_exe_run_status_and_kill_it "$exe_name"
+progress 50
+copy_file
+progress 80
+chmod_all_exe
+progress 90
+/etc/init.d/"$start_shell" start
+progress 100
+record_time

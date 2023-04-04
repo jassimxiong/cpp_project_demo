@@ -1,0 +1,9 @@
+[requires]
+spdlog/1.11.0@
+catch2/2.13.8
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[options]
