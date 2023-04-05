@@ -31,7 +31,7 @@
 ├── build # 构建目录
 ├── cmake # cmake自定义函数、宏等底层cmake代码
 ├── config # 配置文件
-├── deps # 依赖包管理
+├── crates # 依赖包管理
 ├── docs # 文档、流程图等
 ├── output # 存放安装包、测试报告
 └── src
@@ -76,7 +76,7 @@ sudo apt-get install gcc g++
 
 
 ### 2、第三方库管理
-打开顶层项目里的<font color = red>deps/conanfile.txt</font>文件，添加依赖的库，依赖的库可以去[conan中心][1]查找，编译代码，所有需要的conan包都会被安装到~/.conan/data目录下，在程序里链接CONAN_PKG::包名即可。
+打开顶层项目里的<font color = red>crates/conanfile.txt</font>文件，添加依赖的库，依赖的库可以去[conan中心][1]查找，编译代码，所有需要的conan包都会被安装到~/.conan/data目录下，在程序里链接CONAN_PKG::包名即可。
 
 ### 3、代码静态检查
 目前项目中使用的静态分析工具是cppcheck，如果需要的话可以自行添加clang-tidy或者其他工具的支持。
