@@ -65,9 +65,7 @@ pack() {
 
 test() {
     print info 开始测试...
-    cd "$project_dir"/build/ || exit
-    ctest -C Release
-    #-VV --rerun-failed --output-on-failure
+    ctest --test-dir "$project_dir"/build -C Release #-VV --rerun-failed --output-on-failure
     print info 测试结束...
 }
 
