@@ -36,7 +36,10 @@ print() {
 
 build() {
     print info 开始编译...
-    cmake -B "$project_dir"/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$project_dir"/cmake/ToolChain.cmake #-G Ninja
+    if [[ ! -d "$project_dir/build" ]] || [[ -z "$(ls -A "$project_dir"/build)" ]]
+    then
+        cmake -B "$project_dir"/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$project_dir"/cmake/ToolChain.cmake #-G Ninja
+    fi
 	cmake --build "$project_dir"/build --parallel
     print info 编译结束...
 }
