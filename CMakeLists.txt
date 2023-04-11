@@ -29,8 +29,8 @@ set(CONAN_CMAKE_TOOLCHAIN_FILE ${TOP}/cmake/ToolChain.cmake)
 string(REGEX MATCH "^[0-9]+\\.[0-9]+" COMPILER_VERSION ${CMAKE_CXX_COMPILER_VERSION})
 config_conan(
   "${TOP}/crates/conanfile.txt" # conan包
-  "Linux" # os
-  ${CMAKE_SYSTEM_NAME} # os_build
+  ${CMAKE_SYSTEM_NAME} # os
+  ${CMAKE_HOST_SYSTEM_NAME} # os_build
   ${CMAKE_SYSTEM_PROCESSOR} # arch
   ${CMAKE_HOST_SYSTEM_PROCESSOR} # arch_build
   "gcc" # compiler
