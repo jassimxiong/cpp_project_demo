@@ -25,17 +25,8 @@ include(${TOP}/cmake/Output.cmake)
 include(${TOP}/cmake/Debug.cmake)
 include(${TOP}/cmake/Test.cmake)
 
-set(CONAN_CMAKE_TOOLCHAIN_FILE ${TOP}/cmake/ToolChain.cmake)
-string(REGEX MATCH "^[0-9]+\\.[0-9]+" COMPILER_VERSION ${CMAKE_CXX_COMPILER_VERSION})
 config_conan(
   "${TOP}/crates/conanfile.txt" # conan包
-  ${CMAKE_SYSTEM_NAME} # os
-  ${CMAKE_HOST_SYSTEM_NAME} # os_build
-  ${CMAKE_SYSTEM_PROCESSOR} # arch
-  ${CMAKE_HOST_SYSTEM_PROCESSOR} # arch_build
-  "gcc" # compiler
-  ${COMPILER_VERSION} # compiler.version
-  "libstdc++11" # compiler.libcxx
-  ${CMAKE_BUILD_TYPE} # build_type
+  "${TOP}/crates/conan.profile" # conan配置
 )
 add_subdirectory(src)
