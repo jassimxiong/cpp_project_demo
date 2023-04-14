@@ -16,10 +16,7 @@ void LoggerInit() {
     std::string log_file_name = APP_NAME ".log";
     long log_file_size = 1048576 * 3; // 3MB
     int rotation = 3;                 // 日志文件满3个时开始滚动日志
-    while (true) {
-        if (Logger::GetInstance().Init(topic, log_file_name, log_file_size, rotation)) {
-            break;
-        }
+    while (!Logger::GetInstance().Init(topic, log_file_name, log_file_size, rotation)) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
