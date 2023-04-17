@@ -33,6 +33,7 @@
 ├── config # 配置文件
 ├── crates # 依赖包管理
 ├── docs # 文档、流程图等
+├── scripts # 脚本
 ├── output # 存放安装包、测试报告
 └── src
     ├── main # 入口函数
@@ -83,14 +84,14 @@ sudo apt-get install gcc g++
 
 ### 4、编译
 ``` bash
-./build.sh -b
+make build
 ```
 
 执行命令后会编译输出所有的文件到build目录下。
 
 ### 5、生成打包需要的文件
 ``` bash
-./build.sh -i
+make install
 ```
 
 执行命令后会打包所需的文件按照标准的目录结构放到output目录下。
@@ -98,21 +99,21 @@ sudo apt-get install gcc g++
 
 ### 6、打包
 ``` bash
-./build.sh -p
+make pack
 ```
 
-执行命令后会调用pack.py脚本生成安装包放到output目录下。
+执行命令后会调用sripts/pack.sh脚本生成安装包放到output目录下。
 
 
 ### 7、单元测试
-如果目标设备使用的是ssh远程，修改test.sh里的主机名和密码，即可运行下面的命令。如果如果目标设备使用的是adb-server，可以自行更改test.sh里的代码。
+如果目标设备使用的是ssh远程，修改test.sh里的主机名和密码，即可运行下面的命令。如果如果目标设备使用的是adb-server，可以自行更改sripts/test.sh里的代码。
 ``` bash
-./build.sh -t
+make test
 ```
 执行命令后会把需要运行的单元测试目标程序上传到目标设备去测试，测试结束后会把生成的xml文件pull到本地。
 
 ### 8、生成单元测试报告
-执行<font color = red>./build.sh -t</font>后会使用xsltproc把测试时pull到本地的xml文件生成html文件，然后使用python的webbrowser在浏览器预览测试报告。如果需要，可以自行添加一个测试结果分析告警的功能。
+执行<font color = red>make test</font>后会使用xsltproc把测试时pull到本地的xml文件生成html文件，然后使用python的webbrowser在浏览器预览测试报告。如果需要，可以自行添加一个测试结果分析告警的功能。
 
 ### 9、自定义测试
 可以自定义一个shell或者pyhton脚本，然后在<font color = red>cmake/Test.cmake</font>里添加即可。
