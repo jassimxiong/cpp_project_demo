@@ -5,6 +5,7 @@
   "VersionCode": @VERSION_CODE@,
   "Arch": "@ARCH@",
   "Platform": "@PLATFORM@",
-  "Description": "@DESCRIPTION@",
-  "BuildDate": "@BUILD_DATE@"
+  "BuildDate": "@BUILD_DATE@",
+  "GitHash": "@GIT_HASH@",
+  "Description": "@DESCRIPTION@"
 }

@@ -33,6 +33,4 @@ set(Definitions
     VERSION_CODE="${VERSION_CODE}"
     ARCH="${ARCH}"
     PLATFORM="${PLATFORM}"
-    GIT_HASH="${GIT_HASH}"
-    BUILD_DATE="${BUILD_DATE}"
 )

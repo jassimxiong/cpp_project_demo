@@ -1,3 +1,13 @@
+/*
+ * @Author: 熊义 JassimXiong@gmail.com
+ * @Date: 2023-04-13 15:35:42
+ * @LastEditors: 熊义 JassimXiong@gmail.com
+ * @LastEditTime: 2023-04-17 17:45:37
+ * @FilePath: /cpp_project_template/src/main/main.cpp
+ * @Description:
+ *
+ * Copyright (c) 2023 by TupuTechnology Co..Ltd , All Rights Reserved.
+ */
 #include "Test.h"
 #include "utility/Logger.h"
 
@@ -34,11 +44,9 @@ void Banner() {
               "     │ 应用版本:{}({})                                   " END PURP
               "     │ 运行架构:{}                                       " END PURP
               "     │ 运行平台:{}                                       " END PURP
-              "     │ GIT哈希:{}                                       " END PURP
-              "     │ 构建日期:{}                                       " END PURP
               "     ╰───────────────────────────────────────────────── " END BLUE
               "     Copyright (C), 2023 xxx,                           " END,
-         APP_NAME, PKG_NAME, VERSION_NAME, VERSION_CODE, ARCH, PLATFORM, GIT_HASH, BUILD_DATE);
+         APP_NAME, PKG_NAME, VERSION_NAME, VERSION_CODE, ARCH, PLATFORM);
 }
 
 int main() {

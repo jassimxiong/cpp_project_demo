@@ -65,6 +65,11 @@ def LoadPkgInfoFromManifest():
                 else:
                 	print("xx 包描述文件里没有BuildDate")
                 	return 0
+                if("GitHash" in data):
+                	print("++ Git哈希 : %s" % (data['GitHash']))
+                else:
+                	print("xx 包描述文件里没有GitHash")
+                	return 0
                 if("Description" in data):
                 	print("++ 升级描述: %s" % (data['Description']))
                 else:
