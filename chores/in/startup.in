@@ -1,18 +1,20 @@
 #!/bin/sh
 
+daemons="@DAEMONS@"
+app_name="@APP_NAME@"
 pkg_name="@PKG_NAME@"
 pkg_path="@APP_ROOT_DIR@/$pkg_name"
 case "$1" in
   start)
-    echo "Starting @APP_NAME@..."
+    echo "Starting $app_name..."
     cd "$pkg_path" || exit 1
-    nohup ./bin/@DAEMONS@ >/dev/null 2>&1 &
-    cd - || exit
+    nohup ./bin/"$daemons" > /dev/null 2>&1 &
+    cd -
     ;;
   stop)
-    echo "Stopping @APP_NAME@..."
-    killall -9 "@DAEMONS@"
-    killall -9 "@APP_NAME@"
+    echo "Stopping $app_name..."
+    killall -9 "$daemons" > /dev/null 2>&1
+    killall -9 "$app_name" > /dev/null 2>&1
     sleep 1
     ;;
   restart)

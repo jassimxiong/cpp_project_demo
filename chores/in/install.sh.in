@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+start_shell="@STARTUP_SHELL_NAME@"
+exe_name="@APP_NAME@"
+pkg_name="@PKG_NAME@"
+exe_root="@APP_ROOT_DIR@/$pkg_name"
+current_path=$(cd "$(dirname "$0")" && pwd )
+
+install_files() {
+    install -D -m 755 -t "$exe_root"/bin "$current_path"/bin/*
+    install -D -m 755 -t "$exe_root"/lib "$current_path"/lib/*
+    install -D -m 644 -t "$exe_root"/res "$current_path"/res/*
+    install -D -m 644 -t "$exe_root"/config "$current_path"/config/*
+    install -D -m 755 -t /etc/init.d "$current_path/$start_shell"
+    install -D -m 644 -t "$exe_root" "$current_path"/manifest.json
+
+}
+
+begin_time=$(date "+%Y-%m-%d/%H:%M:%S")
+echo "[开始升级]:$begin_time" > /var/log/install_"$exe_name".log
+"$current_path/$start_shell" stop
+install_files
+/etc/init.d/"$start_shell" start
+end_time=$(date "+%Y-%m-%d/%H:%M:%S")
+echo "[结束升级]:$end_time">> /var/log/install_"$exe_name".log
