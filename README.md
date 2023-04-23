@@ -30,7 +30,7 @@
 .
 ├── build # 构建目录
 ├── cmake # cmake自定义函数、宏等底层cmake代码
-├── config # 配置文件
+├── chores # 配置文件、资源文件、......
 ├── crates # 依赖包管理
 ├── docs # 文档、流程图等
 ├── scripts # 脚本

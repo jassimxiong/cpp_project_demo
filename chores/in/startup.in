@@ -9,7 +9,6 @@ case "$1" in
     echo "Starting $app_name..."
     cd "$pkg_path" || exit 1
     nohup ./bin/"$daemons" > /dev/null 2>&1 &
-    cd -
     ;;
   stop)
     echo "Stopping $app_name..."

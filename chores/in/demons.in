@@ -8,7 +8,7 @@ export LD_LIBRARY_PATH=lib:"$LD_LIBRARY_PATH"
 while true
 do
     process=`ps aux | grep $name | grep -v grep`
-    if [ "$process" -eq "" ]
+    if [ "$process" == "" ]
     then
         cd "$path" || exit 1
         killall -9 "$name" > /dev/null 2>&1
