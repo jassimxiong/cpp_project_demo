@@ -7,13 +7,13 @@ name="@APP_NAME@"
 export LD_LIBRARY_PATH=lib:"$LD_LIBRARY_PATH"
 while true
 do
-	if pgrep $name > /dev/null && ! pgrep daemon_$name > /dev/null; then
-	    sleep 30
+	if pgrep -x $name > /dev/null; then
+        echo "$name在线"
 	else
 	    cd "$path" || exit 1
         killall -9 "$name" > /dev/null 2>&1
         ./bin/"$name" &
         cd -
-        sleep 30
 	fi
+    sleep 30
 done
