@@ -12,7 +12,7 @@ do
 	else
 	    cd "$path" || exit 1
         killall -9 "$name" > /dev/null 2>&1
-        ./bin/"$name" &
+        nohup ./bin/"$name" &
         cd -
 	fi
     sleep 30
