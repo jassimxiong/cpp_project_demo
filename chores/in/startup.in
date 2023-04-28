@@ -1,6 +1,6 @@
 #!/bin/sh
 
-daemons="@DAEMONS@"
+daemons="@DAEMON@"
 app_name="@APP_NAME@"
 pkg_name="@PKG_NAME@"
 pkg_path="@APP_ROOT_DIR@/$pkg_name"

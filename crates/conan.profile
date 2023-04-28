@@ -11,7 +11,7 @@ compiler.libcxx=libstdc++11
 build_type=Release
 
 [conf]
-tools.cmake.cmaketoolchain:user_toolchain=["/home/jassim/workspace/tupu/code/ipc/cross-build/rv1109/toolchain.cmake"]
+tools.cmake.cmaketoolchain:user_toolchain=["/home/jassim/workspace/owner/cpp_project_template/cmake/ToolChain.cmake"]
 
 [env]
 CHOST="arm-linux-gnueabihf"

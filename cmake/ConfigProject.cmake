@@ -7,7 +7,7 @@
 # VERSION_CODE: 版本号，公司内部用于升级时判断新旧版本，是一个递增非负数，一般情况版本号递增时版本名也一起递增
 # DESCRIPTION： 升级包描述
 # STARTUP_SHELL_NAME: 开机自启动脚本
-# DAEMONS: 守护进程，保活
+# DAEMON: 守护进程，保活
 # APP_ROOT_DIR: 安装到目标设备的什么路径
 # BUILD_DATE: 编译代码时的时间
 # ARCH: 处理器架构
@@ -19,7 +19,7 @@ set(VERSION_NAME "3.0.1")
 set(VERSION_CODE "101")
 set(DESCRIPTION "修复xxxbug, 优化性能")
 set(STARTUP_SHELL_NAME "S99_${APP_NAME}")
-set(DAEMONS "demons_${APP_NAME}")
+set(DAEMON "daemon_${APP_NAME}")
 set(APP_ROOT_DIR "/home/app")
 set(ARCH "x86")
 set(PLATFORM "linux")

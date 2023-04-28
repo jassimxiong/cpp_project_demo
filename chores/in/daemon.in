@@ -7,15 +7,13 @@ name="@APP_NAME@"
 export LD_LIBRARY_PATH=lib:"$LD_LIBRARY_PATH"
 while true
 do
-    process=`ps aux | grep $name | grep -v grep`
-    if [ "$process" == "" ]
-    then
-        cd "$path" || exit 1
+	if pgrep $name > /dev/null && ! pgrep daemon_$name > /dev/null; then
+	    sleep 30
+	else
+	    cd "$path" || exit 1
         killall -9 "$name" > /dev/null 2>&1
         ./bin/"$name" &
         cd -
         sleep 30
-    else
-        sleep 30
-    fi
+	fi
 done
