@@ -14,7 +14,7 @@
 # PLATFORM： 系统平台
 
 set(APP_NAME ${PROJECT_NAME})
-set(PKG_NAME "com.company.${APP_NAME}")
+set(PKG_NAME "com.company.${APP_NAME}.app")
 set(VERSION_NAME "3.0.1")
 set(VERSION_CODE "101")
 set(DESCRIPTION "修复xxxbug, 优化性能")

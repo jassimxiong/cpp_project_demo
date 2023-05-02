@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 ERROR="\e[31;1m"      
 INFO="\e[32;1m"
 WARN="\e[33;1m"
@@ -36,7 +36,7 @@ for file in $(ls "$project_dir/$output_dir")
 do
     if [[ -d "$project_dir/$output_dir/$file" ]] && [[ "$project_dir/$output_dir/$file" =~ "com." ]]
     then
-        cd "$project_dir/$output_dir" && python3 "$project_dir"/scripts/.pack.py "$file"  && rm "$file" -rf && cd - || exit 0
+        cd "$project_dir/$output_dir" && python3 "$project_dir"/scripts/.pack.py -p "$file" -k ./private.key  && rm "$file" -rf && cd - || exit 0
     fi
 done 
 print info 打包结束...
