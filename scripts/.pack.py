@@ -1,111 +1,158 @@
-import os, time, json, sys, zipfile
+"""
+pip install rsa
+"""
+import os
+import sys
+import time
+import json
+import zipfile
+import shutil
+import hashlib
+import rsa
+import argparse
 
 suffix = ".spk"
-version_code = 0
+pkg_name = ""
 version_name = ""
-folder_name = ""
-folder_path = ""
-output_name = ""
-current_path = ""
+version_code = ""
 
-# 拼接路径
-def SplitJointPath():
-    global folder_name, folder_path, current_path
-    if len(sys.argv) == 2:
-        folder_name = sys.argv[1]
-        current_path = os.getcwd()
-        folder_path = current_path + "/" + folder_name
-        print("")
-        print("++ sources:%s" % (folder_path))
-    else:
-        print("++ 用法: python3 pack.py com.company.app_name(包名)")
-        return 1
 
-def LoadPkgInfoFromManifest():
-    global folder_path, version_code, version_name
-    manifest_path = folder_path + "/manifest.json"
-    if os.path.exists(manifest_path):
-        try:
-            with open(manifest_path, 'r') as file:
-                data = json.load(file)
-                if("PkgName" in data):
-                	print("++ 包名: %s" % (data['PkgName']))
-                else:
-                	print("xx 包描述文件里没有PkgName")
-                	return 0
-                if("AppName" in data):
-                	print("++ 应用名: %s" % (data['AppName']))
-                else:
-                	print("xx 包描述文件里没有AppName")
-                	return 0
-                if("VersionName" in data):
-                    version_name = data['VersionName']
-                    print("++ 版本名: %s" % version_name)
-                else:
-                	print("xx 包描述文件里没有VersionName")
-                	return 0
-                if("VersionCode" in data):
-                	version_code = data['VersionCode']
-                	print("++ 版本号: %s" % (version_code))
-                else:
-                	print("xx 包描述文件里没有VersionCode")
-                	return 0
-                if("Arch" in data):
-                	print("++ 处理器: %s" % (data['Arch']))
-                else:
-                	print("xx 包描述文件里没有Arch")
-                	return 0
-                if("Platform" in data):
-                	print("++ 运行平台: %s" % (data['Platform']))
-                else:
-                	print("xx 包描述文件里没有Platform")
-                	return 0
-                if("BuildDate" in data):
-                	print("++ 编译时间: %s" % (data['BuildDate']))
-                else:
-                	print("xx 包描述文件里没有BuildDate")
-                	return 0
-                if("GitHash" in data):
-                	print("++ Git哈希 : %s" % (data['GitHash']))
-                else:
-                	print("xx 包描述文件里没有GitHash")
-                	return 0
-                if("Description" in data):
-                	print("++ 升级描述: %s" % (data['Description']))
-                else:
-                	print("xx 包描述文件里没有Description")
-                	return 0
-                return 1
-        except:
-            print("xx 读manifest.json失败")
-    else:
-        print("xx 包描述文件manifest.json不存在")
+def check_package(package_path):
+    global pkg_name, version_name, version_code
+    expected_fields = [
+        "PkgName",
+        "AppName",
+        "VersionName",
+        "VersionCode",
+        "Arch",
+        "Platform",
+        "BuildDate",
+        "GitHash",
+        "Description",
+    ]
+    with open(package_path, "r") as f:
+        package = json.load(f)
+        missing_fields = set(expected_fields) - set(package.keys())
+        if missing_fields:
+            print("xx package.json 缺少以下必要字段：", ", ".join(missing_fields))
+            return False
+        else:
+            pkg_name = package["PkgName"]
+            version_name = package["VersionName"]
+            version_code = package["VersionCode"]
+            print("")
+            for field in expected_fields:
+                print(f"=> {field}: {package[field]}")
+            print("")
+            return True
 
-def Pack():
-    global output_name, version_code, version_name, folder_name
-    str_time = time.strftime('%Y%m%d%H%M', time.localtime(time.time()))
-    output_name = folder_name + "_v" + version_name + "_" + str(version_code) + "_" + str_time + suffix
-    print("")
-    with zipfile.ZipFile(output_name, "w") as zipf:
-        for root, dirs, files in os.walk(folder_name):
+
+def compress_folder(folder_path, zip_filename):
+    with zipfile.ZipFile(zip_filename, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(folder_path):
             for file in files:
                 file_path = os.path.join(root, file)
-                ret = zipf.write(file_path)
+                zipf.write(file_path)
+                # zipf.write(file_path, os.path.relpath(file_path, folder_path))
                 print("📦 packing: %s" % file_path)
-    file_name = current_path + "/" + output_name
-    print(" package: %s" % file_name)
 
-def Notice():
-    print("")
-    print(" 请注意打包文件的目录结构规范：")
-    print("(可参考https://github.com/xxx)")
+
+def move_to_target_folder(zip_filename, target_folder):
+    if not os.path.exists(target_folder):
+        os.mkdir(target_folder)
+    os.rename(zip_filename, os.path.join(target_folder, zip_filename))
+
+
+def sign_application(application_path, private_key_path, signature_path):
+    """
+    使用私钥对app进行签名
+    :param application_path: app路径
+    :param private_key_path: 私钥路径
+    :param signature_path: 签名文件保存路径
+    :return: None
+    """
+    # 读取数据
+    with open(application_path, 'rb') as f:
+        data = f.read()
+    # 读取私钥
+    with open(private_key_path, 'r') as f:
+        private_key_data = f.read()
+    # 转换为私钥对象
+    private_key = rsa.PrivateKey.load_pkcs1(private_key_data.encode())
+    # 计算数据哈希值
+    data_hash = hashlib.sha256(data).digest()
+    # 对哈希值进行签名
+    signature = rsa.sign(data_hash, private_key, 'SHA-256')
+    # 将签名保存到文件中
+    with open(signature_path, 'wb') as f:
+        f.write(signature)
+
+
+def pack(folder_path, private_key_path):
+    # 检查 package.json
+    if check_package(folder_path + "/package.json") == False:
+        sys.exit()
+    if not os.path.exists(private_key_path):
+        print(f"xx {private_key_path}文件不存在")
+        sys.exit()
+    # 重命名要压缩的文件夹目录名
+    application = "application"
+    zip_application = application + ".all"
+    shutil.copytree(folder_path, application)
+    # 压缩app相关文件
+    compress_folder(application, zip_application)
+    shutil.rmtree(application)
+    # 移动到pkg_name目录下
+    target_folder = pkg_name
+    move_to_target_folder(zip_application, target_folder)
+    # 签名
+    signature_path = pkg_name + "/signature.sig"
+    zip_application_path = pkg_name + "/" + zip_application
+    sign_application(zip_application_path, private_key_path, signature_path)
+    # 打包
+    str_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+    output_name = pkg_name + "_v" + version_name + \
+        "_" + str(version_code) + "_" + str_time + suffix
+    compress_folder(pkg_name, output_name)
+    shutil.rmtree(pkg_name)
+
+
+def generate_key_pair(private_key_path, public_key_path, key_size=2048):
+    """
+    生成RSA公私钥对, 保存到指定路径下的文件中
+    :param private_key_path: 私钥保存路径
+    :param public_key_path: 公钥保存路径
+    :param key_size: 密钥长度, 默认为2048位
+    :return: None
+    """
+    # 生成RSA密钥对
+    (pubkey, privkey) = rsa.newkeys(key_size)
+    # 将私钥保存到文件中
+    with open(private_key_path, 'w') as f:
+        f.write(privkey.save_pkcs1().decode())
+    # 将公钥保存到文件中
+    with open(public_key_path, 'w') as f:
+        f.write(pubkey.save_pkcs1().decode())
+
 
 if __name__ == '__main__':
-    ret = SplitJointPath()
-    if ret == 1:
-        sys.exit()
-    ret = LoadPkgInfoFromManifest()
-    if ret == 1:
-        Pack()
-    Notice()
-    exit
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p", "--pack", metavar="directory", help="打包指定文件")
+    parser.add_argument("-k", "--key", metavar="key_file", help="RSA私钥")
+    parser.add_argument("-g", "--generate_key",
+                        action="store_true", help="生成RSA密钥对")
+    args = parser.parse_args()
+    if args.generate_key:
+        print("** 生成密钥对")
+        generate_key_pair("private.key", "public.key", 2048)
+    elif args.pack and args.key:
+        print("** 打包指定文件: ", args.pack)
+        print("** 私钥路径: ", args.key)
+        pack(args.pack, args.key)
+    elif args.pack or args.key:
+        print("** 参数不正确，-p和-k需要同时指定")
+    else:
+        parser.print_help()
+    print("")
+    print(" 注意：请按照规范提供正确的包描述文件：")
+    print("(可参考https://github.com/xxx)")
