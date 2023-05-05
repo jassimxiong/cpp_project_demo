@@ -17,7 +17,7 @@ version_name = ""
 version_code = ""
 
 
-def check_package(package_path):
+def check_manifest(manifest_path):
     global pkg_name, version_name, version_code
     expected_fields = [
         "PkgName",
@@ -30,19 +30,19 @@ def check_package(package_path):
         "GitHash",
         "Description",
     ]
-    with open(package_path, "r") as f:
-        package = json.load(f)
-        missing_fields = set(expected_fields) - set(package.keys())
+    with open(manifest_path, "r") as f:
+        manifest = json.load(f)
+        missing_fields = set(expected_fields) - set(manifest.keys())
         if missing_fields:
             print("xx package.json 缺少以下必要字段：", ", ".join(missing_fields))
             return False
         else:
-            pkg_name = package["PkgName"]
-            version_name = package["VersionName"]
-            version_code = package["VersionCode"]
+            pkg_name = manifest["PkgName"]
+            version_name = manifest["VersionName"]
+            version_code = manifest["VersionCode"]
             print("")
             for field in expected_fields:
-                print(f"=> {field}: {package[field]}")
+                print(f"=> {field}: {manifest[field]}")
             print("")
             return True
 
@@ -89,8 +89,8 @@ def sign_application(application_path, private_key_path, signature_path):
 
 
 def pack(folder_path, private_key_path):
-    # 检查 package.json
-    if check_package(folder_path + "/package.json") == False:
+    # 检查 manifest.json
+    if check_manifest(folder_path + "/manifest.json") == False:
         sys.exit()
     if not os.path.exists(private_key_path):
         print(f"xx {private_key_path}文件不存在")
