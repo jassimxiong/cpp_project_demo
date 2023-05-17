@@ -14,8 +14,8 @@ class Any {
 
     template <typename T>
     struct Hold : public HoldBase {
-        explicit Hold(const T &value) : value_(value) {}
-        explicit Hold(T &&value) : value_(std::move(value)) {}
+        Hold(const T &value) : value_(value) {}
+        Hold(T &&value) : value_(std::move(value)) {}
         inline std::unique_ptr<HoldBase> Clone() const override {
             return std::make_unique<Hold<T>>(value_);
         }
@@ -34,24 +34,27 @@ class Any {
     Any(Any &&other) : holdbase_(std::move(other.holdbase_)), type_index_(other.type_index_) {}
     template <typename T, class = typename std::enable_if<
                               !std::is_same<typename std::decay<T>::type, Any>::value, T>::type>
-    explicit Any(T &&value)
+    Any(T &&value)
         : holdbase_(new Hold<typename std::decay<T>::type>(std::forward<T>(value))),
           type_index_(typeid(typename std::decay<T>::type)) {}
-
+    Any &operator=(Any &&other) {
+        holdbase_ = std::move(other.holdbase_);
+        type_index_ = other.type_index_;
+        return *this;
+    }
+    Any &operator=(const Any &other) {
+        if (other.holdbase_) {
+            holdbase_ = other.holdbase_->Clone();
+            type_index_ = other.type_index_;
+        }
+        return *this;
+    }
     Any &swap(Any &other) {
         std::swap(holdbase_, other.holdbase_);
         std::swap(type_index_, other.type_index_);
         return *this;
     }
-
-    Any &operator=(Any other) {
-        holdbase_ = std::move(other.holdbase_);
-        type_index_ = other.type_index_;
-        return *this;
-    }
-
     inline bool HasValue() const { return !!holdbase_; }
-
     inline void Reset() {
         holdbase_.reset();
         type_index_ = typeid(void);
@@ -62,7 +65,6 @@ class Any {
     inline bool Is() const {
         return type_index_ == typeid(T);
     }
-
     template <class T>
     inline T &AnyCast() {
         if (!Is<T>()) {
